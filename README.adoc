@@ -1,0 +1,18 @@
+= Paving a Painless Path to Production AI in your Java Applications
+
+== Maintainer
+
+* Mark Heckler
+* mailto:mark@thehecklers.com[mark@thehecklers.com]
+* mailto:mark.heckler@gmail.com[mark.heckler@gmail.com]
+* https://x.com/mkheck[@mkheck on Twitter/X]
+
+== Purpose
+
+This repository accompanies my session titled *"Paving a Painless Path to Production AI in your Java Applications"* and includes all code written within the session and potentially more (depending upon how much I could cover before time ran out!).
+
+*_Star+watch this repo for updates!_*
+
+== Related presentation
+
+link:https://speakerdeck.com/mkheck/paving-a-painless-path-to-production-ai[Paving a Painless Path to Production AI in your Java Applications]
