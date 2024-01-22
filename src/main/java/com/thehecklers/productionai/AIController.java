@@ -3,6 +3,7 @@ package com.thehecklers.productionai;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.ai.azure.openai.AzureOpenAiChatClient;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/")
 public class AIController {
     private final AzureOpenAiChatClient client;
+
+    private final List<Message> buffer = new ArrayList<>();
 
     public AIController(AzureOpenAiChatClient client) {
         this.client = client;
@@ -48,7 +51,12 @@ public class AIController {
             promptMessages.add(systemMessage);
         }
 
-        return client.generate(new Prompt(promptMessages));
+        promptMessages.forEach(m -> System.out.println(m.getContent()));
+
+        var response = client.generate(new Prompt(promptMessages));
+        response.getGenerations().forEach(buffer::add);
+
+        return response;
     }
 
     // Using PromptTemplate to craft a prompt from parameters replied via the
