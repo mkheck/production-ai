@@ -15,4 +15,4 @@ This repository accompanies my session titled *"Paving a Painless Path to Produc
 
 == Related presentation
 
-link:https://speakerdeck.com/mkheck/paving-a-painless-path-to-production-ai[Paving a Painless Path to Production AI in your Java Applications]
+link:https://speakerdeck.com/mkheck/paving-a-painless-path-to-production-ai-in-your-java-applications[Paving a Painless Path to Production AI in your Java Applications]
