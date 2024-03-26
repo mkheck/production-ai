@@ -8,12 +8,12 @@ import java.util.Map;
 
 import org.springframework.ai.azure.openai.AzureOpenAiChatClient;
 import org.springframework.ai.chat.ChatResponse;
-import org.springframework.ai.prompt.Prompt;
-import org.springframework.ai.prompt.PromptTemplate;
-import org.springframework.ai.prompt.SystemPromptTemplate;
-import org.springframework.ai.prompt.messages.ChatMessage;
-import org.springframework.ai.prompt.messages.Message;
-import org.springframework.ai.prompt.messages.MessageType;
+import org.springframework.ai.chat.messages.ChatMessage;
+import org.springframework.ai.chat.messages.Message;
+import org.springframework.ai.chat.messages.MessageType;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
+import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +32,7 @@ public class AIController {
     // Basic String/String generate() method call
     @GetMapping
     public String generateResponse(@RequestParam(defaultValue = "What is the meaning of life") String message) {
-        return client.generate(message);
+        return client.call(message);
     }
 
     @GetMapping("/fun")
@@ -53,8 +53,10 @@ public class AIController {
 
         promptMessages.forEach(m -> System.out.println(m.getContent()));
 
-        var response = client.generate(new Prompt(promptMessages));
-        response.getGenerations().forEach(buffer::add);
+        var response = client.call(new Prompt(promptMessages));
+        //If you retrieve > 1 result, you can iterate over them to get the output
+        //response.getResults().forEach(r -> buffer.add(r.getOutput()));
+        buffer.add(response.getResult().getOutput());
 
         return response;
     }
@@ -65,6 +67,6 @@ public class AIController {
     public String generateResponseFromTemplate(@RequestParam String requestType, @RequestParam String requestTopic) {
         var template = new PromptTemplate("Tell me a {type} about {topic}",
                 Map.of("type", requestType, "topic", requestTopic));
-        return client.generate(template.create()).getGeneration().getContent();
+        return client.call(template.create()).getResult().getOutput().getContent();
     }
 }
