@@ -64,9 +64,9 @@ public class AIController {
     // Using PromptTemplate to craft a prompt from parameters replied via the
     // request for a tailored response
     @GetMapping("/template")
-    public String generateResponseFromTemplate(@RequestParam String requestType, @RequestParam String requestTopic) {
+    public String generateResponseFromTemplate(@RequestParam String type, @RequestParam String topic) {
         var template = new PromptTemplate("Tell me a {type} about {topic}",
-                Map.of("type", requestType, "topic", requestTopic));
+                Map.of("type", type, "topic", topic));
         return client.call(template.create()).getResult().getOutput().getContent();
     }
 }
