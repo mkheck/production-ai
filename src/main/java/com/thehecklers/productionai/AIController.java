@@ -8,9 +8,8 @@ import java.util.Map;
 
 import org.springframework.ai.azure.openai.AzureOpenAiChatClient;
 import org.springframework.ai.chat.ChatResponse;
-import org.springframework.ai.chat.messages.ChatMessage;
 import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.MessageType;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.chat.prompt.SystemPromptTemplate;
@@ -42,7 +41,8 @@ public class AIController {
 
         var promptMessages = new ArrayList<Message>();
 
-        promptMessages.add(new ChatMessage(MessageType.USER, message));
+        promptMessages.addAll(buffer);
+        promptMessages.add(new UserMessage(message));
 
         if (celebrity != null) {
             // Add a system message to the prompt to indicate the celebrity
