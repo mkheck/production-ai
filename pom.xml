@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.2.4</version>
+		<version>3.3.0</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.thehecklers</groupId>
@@ -16,7 +16,7 @@
 	<description>Paving a Painless Path to Production AI</description>
 	<properties>
 		<java.version>21</java.version>
-		<spring-ai.version>0.8.1</spring-ai.version>
+		<spring-ai.version>1.0.0-M1</spring-ai.version>
 	</properties>
 	<dependencies>
 		<dependency>

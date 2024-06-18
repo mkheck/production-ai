@@ -1,13 +1,13 @@
 package com.thehecklers.productionai;
 
+import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
+import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.ai.azure.openai.AzureOpenAiChatClient;
-import org.springframework.ai.chat.ChatResponse;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 @RequestMapping("/")
 public class AIController {
-    private final AzureOpenAiChatClient client;
+    private final AzureOpenAiChatModel client;
 
     private final List<Message> buffer = new ArrayList<>();
 
-    public AIController(AzureOpenAiChatClient client) {
+    public AIController(AzureOpenAiChatModel client) {
         this.client = client;
     }
 
