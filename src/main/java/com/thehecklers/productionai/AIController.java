@@ -1,37 +1,35 @@
 package com.thehecklers.productionai;
 
-import org.springframework.ai.azure.openai.AzureOpenAiChatModel;
+import org.springframework.ai.azure.openai.AzureOpenAiImageModel;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.image.ImagePrompt;
+import org.springframework.ai.image.ImageResponse;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import org.springframework.ai.chat.messages.Message;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
-import org.springframework.ai.chat.prompt.SystemPromptTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("/")
 public class AIController {
-    private final AzureOpenAiChatModel client;
+    private final ChatClient client;
+    private final AzureOpenAiImageModel azureOpenaiImageModel;
 
-    private final List<Message> buffer = new ArrayList<>();
-
-    public AIController(AzureOpenAiChatModel client) {
-        this.client = client;
+    public AIController(ChatClient.Builder builder, AzureOpenAiImageModel azureOpenaiImageModel) {
+        this.client = builder.build();
+        this.azureOpenaiImageModel = azureOpenaiImageModel;
     }
 
     // Basic String/String generate() method call
     @GetMapping
     public String generateResponse(@RequestParam(defaultValue = "What is the meaning of life") String message) {
-        return client.call(message);
+        return client.prompt()
+                .user(message)
+                .call()
+                .content();
     }
 
     @GetMapping("/fun")
@@ -39,34 +37,44 @@ public class AIController {
             @RequestParam(defaultValue = "What is the meaning of life") String message,
             @RequestParam(required = false) String celebrity) {
 
-        var promptMessages = new ArrayList<Message>();
-
-        promptMessages.addAll(buffer);
-        promptMessages.add(new UserMessage(message));
+        ChatClient.ChatClientRequest request = client.prompt()
+                .user(message);
 
         if (celebrity != null) {
-            // Add a system message to the prompt to indicate the celebrity
-            var systemMessage = new SystemPromptTemplate("You respond in the style of {celebrity}.")
-                    .createMessage(Map.of("celebrity", celebrity));
-            promptMessages.add(systemMessage);
+            request = request.system(String.format("You respond in the style of %s.", celebrity));
         }
 
-        promptMessages.forEach(m -> System.out.println(m.getContent()));
+        return request
+                .call()
+                .chatResponse();
+    }
 
-        var response = client.call(new Prompt(promptMessages));
-        //If you retrieve > 1 result, you can iterate over them to get the output
-        //response.getResults().forEach(r -> buffer.add(r.getOutput()));
-        buffer.add(response.getResult().getOutput());
-
-        return response;
+    @GetMapping("/entity")
+    public AIAnswer generateResponseWithEntity(@RequestParam String message) {
+        return client.prompt()
+                .user(message)
+                .call()
+                .entity(AIAnswer.class);
     }
 
     // Using PromptTemplate to craft a prompt from parameters replied via the
     // request for a tailored response
     @GetMapping("/template")
-    public String generateResponseFromTemplate(@RequestParam String type, @RequestParam String topic) {
+    public String generateResponseFromTemplate(
+            @RequestParam String type,
+            @RequestParam String topic) {
+
         var template = new PromptTemplate("Tell me a {type} about {topic}",
                 Map.of("type", type, "topic", topic));
-        return client.call(template.create()).getResult().getOutput().getContent();
+
+        return client.prompt(template.create())
+                .call()
+                .content();
+    }
+
+    @GetMapping("/image")
+    public ImageResponse generateImageResponse(@RequestParam String description) {
+        return azureOpenaiImageModel.call(
+                new ImagePrompt(description));
     }
 }
