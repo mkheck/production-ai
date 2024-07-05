@@ -37,14 +37,14 @@ public class AIController {
             @RequestParam(defaultValue = "What is the meaning of life") String message,
             @RequestParam(required = false) String celebrity) {
 
-        ChatClient.ChatClientRequest request = client.prompt()
-                .user(message);
-
-        if (celebrity != null) {
-            request = request.system(String.format("You respond in the style of %s.", celebrity));
-        }
-
-        return request
+        return client.prompt()
+                .user(u -> u.text(message))
+                .system(s -> {
+                    if(celebrity != null) {
+                        s.text("You should respond in the style of ${celebrity}");
+                        s.param("celebrity",celebrity);
+                    }
+                })
                 .call()
                 .chatResponse();
     }
