@@ -1,8 +1,8 @@
 package com.thehecklers.productionai;
 
-import org.springframework.ai.azure.openai.AzureOpenAiImageModel;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatResponse;
+import org.springframework.ai.image.ImageModel;
 import org.springframework.ai.image.ImagePrompt;
 import org.springframework.ai.image.ImageResponse;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 public class AIController {
     private final ChatClient client;
-    private final AzureOpenAiImageModel azureOpenaiImageModel;
+    private final ImageModel imageModel;
 
-    public AIController(ChatClient.Builder builder, AzureOpenAiImageModel azureOpenaiImageModel) {
+    public AIController(ChatClient.Builder builder, ImageModel imageModel) {
         this.client = builder.build();
-        this.azureOpenaiImageModel = azureOpenaiImageModel;
+        this.imageModel = imageModel;
     }
 
     // Basic String/String generate() method call
@@ -74,7 +74,7 @@ public class AIController {
 
     @GetMapping("/image")
     public ImageResponse generateImageResponse(@RequestParam String description) {
-        return azureOpenaiImageModel.call(
+        return imageModel.call(
                 new ImagePrompt(description));
     }
 }
